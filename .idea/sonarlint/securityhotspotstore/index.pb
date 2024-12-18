@@ -22,3 +22,7 @@ Fclient-1/src/main/java/ru/etozhealexis/client1/Client1Application.java,4/4/445
 .src/main/resources/archetype-resources/pom.xml,f/2/f26e80b2744a2ca43990a291c6a2ce2bd75a8d52
 m
 =src/main/resources/archetype-resources/src/main/java/App.java,6/2/6267b23b9f509e1ce091da3b0e90c88d31b520bf
+v
+Fclient-1/src/main/java/ru/etozhealexis/client1/api/TestController.java,f/c/fc601bdb9dfc5f482da5292bfca4a7062f9b0768
+v
+Fclient-2/src/main/java/ru/etozhealexis/client2/Client2Application.java,7/9/793934643d9e5da34a0126c974d2dfc6014109cf
