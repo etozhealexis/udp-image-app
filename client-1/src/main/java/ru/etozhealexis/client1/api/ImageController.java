@@ -16,11 +16,11 @@ public class ImageController {
 
     @PutMapping("/generate")
     public void uploadImage() {
-        imageService.generateAndSaveImage();
+        imageService.generateAndSaveMatrix();
     }
 
     @GetMapping
     public String getImage() {
-        return imageService.getImage();
+        return imageService.getMatrix();
     }
 }
