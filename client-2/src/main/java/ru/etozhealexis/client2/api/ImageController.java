@@ -1,4 +1,4 @@
-package ru.etozhealexis.client1.api;
+package ru.etozhealexis.client2.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    private static final String PIXELS_FILE_NAME = "data/client-1/pixels.csv";
+    private static final String PIXELS_FILE_NAME = "data/client-2/pixels.csv";
 
     @PutMapping("/generate")
     public void uploadImage() {

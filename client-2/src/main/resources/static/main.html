@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Web Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .images-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .image-wrapper {
+            text-align: center;
+        }
+        .image-container {
+            display: inline-block;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .pixel {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+        }
+        .image-container > div {
+            line-height: 0;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<h1>Image Web Application</h1>
+<div class="images-wrapper">
+    <div class="image-wrapper">
+        <span class="label">Internal Image</span>
+        <div id="image-container" class="image-container"></div>
+    </div>
+    <div class="image-wrapper">
+        <span class="label">External Image</span>
+        <div id="external-image-container" class="image-container"></div>
+    </div>
+</div>
+<button id="generate-button">Generate Image</button>
+<button id="send-button">Send Image</button>
+<button id="retrieve-external-button">Retrieve External Image</button>
+
+<script>
+    const imageContainer = document.getElementById('image-container');
+    const externalImageContainer = document.getElementById('external-image-container');
+    const generateButton = document.getElementById('generate-button');
+    const sendButton = document.getElementById('send-button');
+    const retrieveExternalButton = document.getElementById('retrieve-external-button');
+
+    function renderImage(imageString, container) {
+        container.innerHTML = '';
+        const rows = imageString.split('\n');
+        rows.forEach(row => {
+            const pixels = row.split(',');
+            const rowDiv = document.createElement('div');
+            pixels.forEach(pixel => {
+                const pixelDiv = document.createElement('div');
+                const [r, g, b] = pixel.split('.').map(Number);
+                pixelDiv.className = 'pixel';
+                pixelDiv.style.backgroundColor = `rgb(${r},${g},${b})`;
+                rowDiv.appendChild(pixelDiv);
+            });
+            container.appendChild(rowDiv);
+        });
+    }
+
+    async function generateImage() {
+        try {
+            await fetch('/image/generate', { method: 'PUT' });
+            const response = await fetch('/image');
+            if (response.ok) {
+                const imageString = await response.text();
+                renderImage(imageString, imageContainer);
+            } else {
+                alert('Failed to fetch image.');
+            }
+        } catch (error) {
+            console.error('Error generating image:', error);
+            alert('Error generating image.');
+        }
+    }
+
+    async function sendImage() {
+        try {
+            const response = await fetch('/image/send', { method: 'POST' });
+            if (response.ok) {
+                alert('Image sent successfully!');
+            } else {
+                alert('Failed to send image.');
+            }
+        } catch (error) {
+            console.error('Error sending image:', error);
+            alert('Error sending image.');
+        }
+    }
+
+    async function retrieveExternalImage() {
+        try {
+            const response = await fetch('/image/external');
+            if (response.ok) {
+                const imageString = await response.text();
+                renderImage(imageString, externalImageContainer);
+            } else {
+                alert('Failed to fetch external image.');
+            }
+        } catch (error) {
+            console.error('Error retrieving external image:', error);
+            alert('Error retrieving external image.');
+        }
+    }
+
+    async function loadImageOnLoad() {
+        try {
+            const response = await fetch('/image');
+            if (response.ok) {
+                const imageString = await response.text();
+                renderImage(imageString, imageContainer);
+            } else {
+                console.warn('No image available on load.');
+            }
+        } catch (error) {
+            console.error('Error loading image on load:', error);
+        }
+    }
+
+    window.addEventListener('load', loadImageOnLoad);
+    generateButton.addEventListener('click', generateImage);
+    sendButton.addEventListener('click', sendImage);
+    retrieveExternalButton.addEventListener('click', retrieveExternalImage);
+</script>
+</body>
+</html>

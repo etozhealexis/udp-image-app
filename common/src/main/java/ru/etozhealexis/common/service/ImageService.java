@@ -1,7 +1,8 @@
-package ru.etozhealexis.client1.service;
+package ru.etozhealexis.common.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,20 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
-    private static final String PIXELS_FILE_NAME = "data/client-1/pixels.csv";
-    private static final int MATRIX_DIMENSION = 800;
     private final Random random = new Random();
+
+    private static final int MATRIX_DIMENSION = 80;
 
     /**
      * Generates a new matrix that contains pixels of an image
      */
     @SneakyThrows
-    public void generateAndSaveMatrix() {
+    public void generateAndSaveMatrix(String fileName) {
         List<List<String>> generatedPixels = generateMatrix();
-        try (CSVWriter writer = new CSVWriter(new FileWriter(PIXELS_FILE_NAME))) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
             generatedPixels.forEach(columns -> {
                 String[] line = columns.toArray(String[]::new);
                 writer.writeNext(line);
@@ -47,8 +49,8 @@ public class ImageService {
      * @return matrix
      */
     @SneakyThrows
-    public String getMatrix() {
-        try (Reader reader = Files.newBufferedReader(Path.of(PIXELS_FILE_NAME))) {
+    public String getMatrix(String fileName) {
+        try (Reader reader = Files.newBufferedReader(Path.of(fileName))) {
             try (CSVReader csvReader = new CSVReader(reader)) {
                 String result = csvReader.readAll()
                         .stream()

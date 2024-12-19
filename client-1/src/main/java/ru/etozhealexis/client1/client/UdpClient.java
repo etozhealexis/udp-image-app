@@ -17,4 +17,9 @@ public class UdpClient {
         log.info("Sending message to host={} with port={}", messageHandler.getHost(), messageHandler.getPort());
         messageHandler.handleMessageInternal(MessageBuilder.withPayload(message).build());
     }
+
+    public void sendImage(String message) {
+        log.info("Sending message to host={} with port={}", messageHandler.getHost(), messageHandler.getPort());
+        messageHandler.handleMessageInternal(MessageBuilder.withPayload(message).build());
+    }
 }

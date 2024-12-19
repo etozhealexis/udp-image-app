@@ -4,10 +4,10 @@
     <groupId>ru.etozhealexis</groupId>
     <artifactId>udp-app</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Archetype - udp-app</name>
 
     <packaging>pom</packaging>
     <modules>
+        <module>common</module>
         <module>client-1</module>
         <module>client-2</module>
     </modules>
