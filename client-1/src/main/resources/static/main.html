@@ -26,8 +26,8 @@
         }
         .pixel {
             display: inline-block;
-            width: 5px;
-            height: 5px;
+            width: 40px;
+            height: 40px;
         }
         .image-container > div {
             line-height: 0;
@@ -87,7 +87,7 @@
     async function generateImage() {
         try {
             await fetch('/image/generate', { method: 'PUT' });
-            const response = await fetch('/image');
+            const response = await fetch('/image/internal');
             if (response.ok) {
                 const imageString = await response.text();
                 renderImage(imageString, imageContainer);
@@ -131,7 +131,7 @@
 
     async function loadImageOnLoad() {
         try {
-            const response = await fetch('/image');
+            const response = await fetch('/image/internal');
             if (response.ok) {
                 const imageString = await response.text();
                 renderImage(imageString, imageContainer);
