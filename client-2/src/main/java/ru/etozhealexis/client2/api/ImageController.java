@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.etozhealexis.client2.client.UdpClient;
+import ru.etozhealexis.common.constatnts.Constants;
+import ru.etozhealexis.common.service.EncodeService;
 import ru.etozhealexis.common.service.ImageService;
 
 @Slf4j
@@ -16,22 +19,28 @@ import ru.etozhealexis.common.service.ImageService;
 public class ImageController {
 
     private final ImageService imageService;
-
-    private static final String PIXELS_FILE_NAME = "data/client-2/pixels.csv";
+    private final EncodeService encodeService;
+    private final UdpClient udpClient;
 
     @PutMapping("/generate")
     public void uploadImage() {
-        imageService.generateAndSaveMatrix(PIXELS_FILE_NAME);
+        imageService.generateAndSaveMatrix(Constants.CLIENT_2_INTERNAL_IMAGE_FILE_NAME);
     }
 
-    @GetMapping
-    public String getImage() {
-        return imageService.getMatrix(PIXELS_FILE_NAME);
+    @GetMapping("/internal")
+    public String getInternalImage() {
+        return imageService.getMatrix(Constants.CLIENT_2_INTERNAL_IMAGE_FILE_NAME);
+    }
+
+    @GetMapping("/external")
+    public String getExternalImage() {
+        encodeService.decode(Constants.CLIENT_2_EXTERNAL_JPEG_IMAGE_FILE_NAME, Constants.CLIENT_2_EXTERNAL_IMAGE_FILE_NAME);
+        return imageService.getMatrix(Constants.CLIENT_2_EXTERNAL_IMAGE_FILE_NAME);
     }
 
     @PostMapping("/send")
     public void encodeImage() {
-        log.info("sending image");
-//        imageService.sendImage();
+        encodeService.encode(Constants.CLIENT_2_INTERNAL_IMAGE_FILE_NAME, Constants.CLIENT_2_INTERNAL_JPEG_IMAGE_FILE_NAME);
+//        udpClient.sendMessage();
     }
 }
