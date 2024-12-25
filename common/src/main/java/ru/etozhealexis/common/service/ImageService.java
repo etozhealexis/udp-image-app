@@ -63,34 +63,71 @@ public class ImageService {
      */
     private List<List<String>> generateMatrix() {
         List<List<String>> matrix = new ArrayList<>(Constants.MATRIX_DIMENSION);
+        String previousRowColor = generateRandomBaseColor();
+
         for (int i = 0; i < Constants.MATRIX_DIMENSION; i++) {
-            matrix.add(generateLine());
+            matrix.add(generateLine(previousRowColor));
+            previousRowColor = matrix.get(i).get(0);
         }
         return matrix;
     }
 
     /**
-     * Generates a line with {@link Constants.MATRIX_DIMENSION} columns
+     * Generates a line of pixels
      *
-     * @return generated line
+     * @param baseColor base color
+     * @return line of radndom pixels
      */
-    private List<String> generateLine() {
+    private List<String> generateLine(String baseColor) {
         List<String> line = new ArrayList<>(Constants.MATRIX_DIMENSION);
+        String previousPixelColor = baseColor;
+
         for (int i = 0; i < Constants.MATRIX_DIMENSION; i++) {
-            line.add(generateColumn());
+            String newColor = generateSimilarColor(previousPixelColor);
+            line.add(newColor);
+            previousPixelColor = newColor;
         }
         return line;
     }
 
     /**
-     * Generates column, consisting of RGB values
+     * Generates similar color
      *
-     * @return generated column
+     * @param baseColor base color
+     * @return similar to base color pixel
      */
-    private String generateColumn() {
+    private String generateSimilarColor(String baseColor) {
+        String[] parts = baseColor.split("\\.");
+        int red = Integer.parseInt(parts[0]);
+        int green = Integer.parseInt(parts[1]);
+        int blue = Integer.parseInt(parts[2]);
+
+        red = clamp(red + random.nextInt(11) - 5);
+        green = clamp(green + random.nextInt(11) - 5);
+        blue = clamp(blue + random.nextInt(11) - 5);
+
+        return red + "." + green + "." + blue;
+    }
+
+    /**
+     * Generates random base color
+     *
+     * @return randomly generated pixel
+     */
+    private String generateRandomBaseColor() {
         int red = random.nextInt(256);
         int green = random.nextInt(256);
         int blue = random.nextInt(256);
         return red + "." + green + "." + blue;
+    }
+
+    /**
+     * Deletes colors that are out of bound
+     *
+     * @param value color value
+     * @return bounded color value
+     */
+    private int clamp(int value) {
+        return Math.max(0, Math.min(255, value));
     }
 }

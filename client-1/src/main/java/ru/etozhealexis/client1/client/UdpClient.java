@@ -14,6 +14,9 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 
+/**
+ * Class for sending messages via UDP
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

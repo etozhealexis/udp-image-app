@@ -4,11 +4,17 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -28,6 +34,7 @@ public class KeyService {
      * @param receiverPublicKeyBytes receiver public key
      * @return encrypted key
      */
+    @SneakyThrows
     public byte[] generateEncryptedKey(byte[] receiverPublicKeyBytes) {
         secretKey = generateSecretKey();
         PublicKey receiverPublicKey = generatePublicKey(receiverPublicKeyBytes);
@@ -52,8 +59,7 @@ public class KeyService {
      *
      * @return secret key
      */
-    @SneakyThrows
-    private SecretKey generateSecretKey() {
+    private SecretKey generateSecretKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(KEY_SIZE);
         return keyGenerator.generateKey();
@@ -65,8 +71,8 @@ public class KeyService {
      * @param receiverPublicKeyBytes inner public key
      * @return outer public key
      */
-    @SneakyThrows
-    private PublicKey generatePublicKey(byte[] receiverPublicKeyBytes) {
+    private PublicKey generatePublicKey(byte[] receiverPublicKeyBytes)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(receiverPublicKeyBytes);
         return keyFactory.generatePublic(keySpec);
@@ -79,8 +85,8 @@ public class KeyService {
      * @param secretKey         secret key
      * @return encrypted key
      */
-    @SneakyThrows
-    private byte[] generateEncryptedKey(PublicKey receiverPublicKey, SecretKey secretKey) {
+    private byte[] generateEncryptedKey(PublicKey receiverPublicKey, SecretKey secretKey)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, receiverPublicKey);
         return cipher.doFinal(secretKey.getEncoded());

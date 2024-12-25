@@ -8,6 +8,9 @@ import org.springframework.integration.ip.udp.UnicastReceivingChannelAdapter;
 import org.springframework.integration.ip.udp.UnicastSendingMessageHandler;
 import org.springframework.messaging.MessageChannel;
 
+/**
+ * Configuration of UDP connection
+ */
 @Configuration
 public class UdpConfig {
 

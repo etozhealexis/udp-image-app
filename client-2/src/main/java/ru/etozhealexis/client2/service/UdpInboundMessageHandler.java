@@ -22,6 +22,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * UDP message handler
+ */
 @Slf4j
 @MessageEndpoint
 @RequiredArgsConstructor

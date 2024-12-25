@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
 
-    public static final int MATRIX_DIMENSION = 8;
+    public static final int MATRIX_DIMENSION = 80;
     public static final int PACKET_SIZE = 32;
     public static final int HEADER_SIZE = 16;
 

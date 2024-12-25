@@ -1,4 +1,4 @@
-package ru.etozhealexis.client2.config;
+package ru.etozhealexis.client1.config;
 
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
