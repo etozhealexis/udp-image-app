@@ -45,7 +45,7 @@ public class ImageController {
     public void encodeImage() {
         encodeService.encode(Constants.CLIENT_2_INTERNAL_IMAGE_FILE_NAME, Constants.CLIENT_2_INTERNAL_JPEG_IMAGE_FILE_NAME);
         udpClient.establishHandshake(client1Feign.getPublicKey());
-        Thread.sleep(1000);
+        Thread.sleep(300);
         udpClient.sendImage(Constants.CLIENT_2_INTERNAL_JPEG_IMAGE_FILE_NAME);
     }
 }

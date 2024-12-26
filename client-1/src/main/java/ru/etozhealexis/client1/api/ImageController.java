@@ -36,7 +36,7 @@ public class ImageController {
 
     @GetMapping("/external")
     public String getExternalImage() {
-        encodeService.decode(Constants.CLIENT_1_INTERNAL_JPEG_IMAGE_FILE_NAME, Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
+        encodeService.decode(Constants.CLIENT_1_EXTERNAL_JPEG_IMAGE_FILE_NAME, Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
         return imageService.getMatrix(Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
     }
 
@@ -45,7 +45,7 @@ public class ImageController {
     public void encodeAndSendImage() {
         encodeService.encode(Constants.CLIENT_1_INTERNAL_IMAGE_FILE_NAME, Constants.CLIENT_1_INTERNAL_JPEG_IMAGE_FILE_NAME);
         udpClient.establishHandshake(client2Feign.getPublicKey());
-        Thread.sleep(1000);
+        Thread.sleep(300);
         udpClient.sendImage(Constants.CLIENT_1_INTERNAL_JPEG_IMAGE_FILE_NAME);
     }
 }

@@ -21,6 +21,8 @@ import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * UDP message handler
@@ -30,7 +32,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UdpInboundMessageHandler {
 
-    private Map<Integer, byte[]> packetMap = new HashMap<>();
+    private ConcurrentMap<Integer, byte[]> packetMap = new ConcurrentHashMap<>();
     private int totalPackets = -1;
     private boolean checksumValidation = true;
 

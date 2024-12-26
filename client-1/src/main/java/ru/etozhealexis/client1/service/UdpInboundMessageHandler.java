@@ -11,16 +11,21 @@ import ru.etozhealexis.common.constatnts.Constants;
 import ru.etozhealexis.common.util.ChecksumUtil;
 import ru.etozhealexis.common.util.ChunkUtil;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * UDP message handler
@@ -30,7 +35,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UdpInboundMessageHandler {
 
-    private Map<Integer, byte[]> packetMap = new HashMap<>();
+    private ConcurrentMap<Integer, byte[]> packetMap = new ConcurrentHashMap<>();
     private int totalPackets = -1;
     private boolean checksumValidation = true;
 
@@ -95,7 +100,7 @@ public class UdpInboundMessageHandler {
                 return;
             }
 
-            saveImage(imageBytes, Constants.CLIENT_1_EXTERNAL_JPEG_IMAGE_FILE_NAME);
+            saveImage(imageBytes);
             log.info("Image successfully received");
             cleanData();
         }
@@ -108,20 +113,22 @@ public class UdpInboundMessageHandler {
         secretKey = null;
     }
 
-    private static void saveImage(byte[] imageBytes, String filePath) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+    private static void saveImage(byte[] imageBytes) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(Constants.CLIENT_1_EXTERNAL_JPEG_IMAGE_FILE_NAME)) {
             fos.write(imageBytes);
         }
     }
 
-    private SecretKey decryptSecretKey(byte[] encryptedKey) throws Exception {
+    private SecretKey decryptSecretKey(byte[] encryptedKey)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher rsaCipher = Cipher.getInstance("RSA");
         rsaCipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] decryptedKey = rsaCipher.doFinal(encryptedKey);
         return new SecretKeySpec(decryptedKey, "AES");
     }
 
-    private byte[] decryptPayload(byte[] payload) throws Exception {
+    private byte[] decryptPayload(byte[] payload)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         return cipher.doFinal(payload);
