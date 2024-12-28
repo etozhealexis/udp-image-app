@@ -1,8 +1,10 @@
 package ru.etozhealexis.client1.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
@@ -38,10 +40,19 @@ public class UdpInboundMessageHandler {
     private ConcurrentMap<Integer, byte[]> packetMap = new ConcurrentHashMap<>();
     private int totalPackets = -1;
     private boolean checksumValidation = true;
+    private String imageFileName = Constants.CLIENT_1_EXTERNAL_FORMAT_IMAGE_FILE_NAME;
 
     private SecretKey secretKey;
 
     private final PrivateKey privateKey;
+    private final Environment environment;
+
+    @PostConstruct
+    public void init() {
+        if (environment.matchesProfiles("jpeg")) {
+            imageFileName += Constants.JPEG_FILE_EXTENSION;
+        }
+    }
 
     @SneakyThrows
     @ServiceActivator(inputChannel = "inboundChannel")
@@ -100,7 +111,7 @@ public class UdpInboundMessageHandler {
                 return;
             }
 
-            saveImage(imageBytes);
+            saveImage(imageBytes, imageFileName);
             log.info("Image successfully received");
             cleanData();
         }
@@ -113,8 +124,8 @@ public class UdpInboundMessageHandler {
         secretKey = null;
     }
 
-    private static void saveImage(byte[] imageBytes) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(Constants.CLIENT_1_EXTERNAL_JPEG_IMAGE_FILE_NAME)) {
+    private static void saveImage(byte[] imageBytes, String imageFileName) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(imageFileName)) {
             fos.write(imageBytes);
         }
     }

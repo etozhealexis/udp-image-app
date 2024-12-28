@@ -2,6 +2,9 @@ package ru.etozhealexis.client1.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import ru.etozhealexis.common.service.EncodeJPEGService;
+import ru.etozhealexis.common.service.EncodePPMService;
 import ru.etozhealexis.common.service.EncodeService;
 import ru.etozhealexis.common.service.ImageService;
 import ru.etozhealexis.common.service.KeyService;
@@ -18,8 +21,15 @@ public class CommonConfig {
     }
 
     @Bean
-    public EncodeService encodeService() {
-        return new EncodeService();
+    @Profile("jpeg")
+    public EncodeService jpegEncodeService() {
+        return new EncodeJPEGService();
+    }
+
+    @Bean
+    @Profile("ppm")
+    public EncodeService ppmEncodeService() {
+        return new EncodePPMService();
     }
 
     @Bean

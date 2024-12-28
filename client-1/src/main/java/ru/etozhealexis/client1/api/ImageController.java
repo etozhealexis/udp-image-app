@@ -1,7 +1,9 @@
 package ru.etozhealexis.client1.api;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +26,19 @@ public class ImageController {
     private final UdpClient udpClient;
     private final Client2Feign client2Feign;
 
+    private final Environment environment;
+
+    private String internalFormatImageFileName = Constants.CLIENT_1_INTERNAL_FORMAT_IMAGE_FILE_NAME;
+    private String externalFormatFileName = Constants.CLIENT_1_EXTERNAL_FORMAT_IMAGE_FILE_NAME;
+
+    @PostConstruct
+    public void init() {
+        if (environment.matchesProfiles("jpeg")) {
+            internalFormatImageFileName += Constants.JPEG_FILE_EXTENSION;
+            externalFormatFileName += Constants.JPEG_FILE_EXTENSION;
+        }
+    }
+
     @PutMapping("/generate")
     public void uploadImage() {
         imageService.generateAndSaveMatrix(Constants.CLIENT_1_INTERNAL_IMAGE_FILE_NAME);
@@ -36,16 +51,16 @@ public class ImageController {
 
     @GetMapping("/external")
     public String getExternalImage() {
-        encodeService.decode(Constants.CLIENT_1_EXTERNAL_JPEG_IMAGE_FILE_NAME, Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
+        encodeService.decode(externalFormatFileName, Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
         return imageService.getMatrix(Constants.CLIENT_1_EXTERNAL_IMAGE_FILE_NAME);
     }
 
     @SneakyThrows
     @PostMapping("/send")
     public void encodeAndSendImage() {
-        encodeService.encode(Constants.CLIENT_1_INTERNAL_IMAGE_FILE_NAME, Constants.CLIENT_1_INTERNAL_JPEG_IMAGE_FILE_NAME);
+        encodeService.encode(Constants.CLIENT_1_INTERNAL_IMAGE_FILE_NAME, internalFormatImageFileName);
         udpClient.establishHandshake(client2Feign.getPublicKey());
         Thread.sleep(300);
-        udpClient.sendImage(Constants.CLIENT_1_INTERNAL_JPEG_IMAGE_FILE_NAME);
+        udpClient.sendImage(internalFormatImageFileName);
     }
 }
